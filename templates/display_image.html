@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<div class="alert alert-primary" role="alert">
+   <h3> 表示</h3>
+</div>
+{% endblock header %}
+
+{% block content %}
+<div class="container">
+    <div class="alert alert-success d-flex justify-content-evenly" role="alert">
+        <p class=""><img src='{{ last_img.img.url }}' width="300"></p>
+        <p class=""><img src='{{ last_img.gray.url }}' width="300"></p>
+    </div>
+
+<div class="alert d-flex justify-content-end">
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">ホーム</a>
+    <a href="{% url 'upload' %}" class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">アップロード</a>
+</div>
+</div>
+{% endblock content %}

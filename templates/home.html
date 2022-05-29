@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<div class="text-white text-center bg-dark p-3 p-sm-5 mb-4 rounded">
+    <h1 class="display-4">画像アップロードアプリ</h1>
+    <p class="lead">説明</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<a href="{% url 'upload' %}" class="btn btn-primary  " tabindex="-1" role="button" aria-disabled="true">アップロード</a>
+{% endblock content %}
