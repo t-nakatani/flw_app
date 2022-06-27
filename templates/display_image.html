@@ -9,9 +9,33 @@
 {% block content %}
 <div class="container">
     <div class="alert alert-success d-flex justify-content-evenly" role="alert">
-        <p class=""><img src='{{ last_img.img.url }}' width="300"></p>
-        <p class=""><img src='{{ last_img.gray.url }}' width="300"></p>
+        <p class=""><img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}' id="img1" onclick="mccl('img1')"></p>
+        <p class=""><img src='{{ last_img.gray.url }}' width='{{ width }}' height='{{ height }}' id="img2" onclick="mccl('img2')"></p>
     </div>
+    <script>
+    	var xy_coord_list = [];
+	    function mccl(idname){
+	        var s = document.getElementById(idname);
+	        var w0 = {{ width }};//初期値
+	        var h0 = {{ height }};//初期値
+	        w1 = s.getAttribute("width");//現在
+	        h1 = s.getAttribute("height");
+	        var r = s.getBoundingClientRect();
+	        var x = Math.round(event.clientX-r.left);
+	        var y = Math.round(event.clientY-r.top);
+	        x = Math.round(x*(w0/w1));
+	        y = Math.round(y*(h0/h1));
+	        xy_coord_list.push(x, y);
+	        document.getElementById('coord_list').value = xy_coord_list;
+	        //////ここ座標
+	        alert(xy_coord_list);
+	    };
+	</script>
+	<form method="post">
+		{% csrf_token %}
+		<input type="hidden" name="coord_list" id="coord_list">
+		<input type="submit" value="送信">
+	</form>
 
 <div class="alert d-flex justify-content-end">
     <a href="{% url 'home' %}" class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">ホーム</a>
