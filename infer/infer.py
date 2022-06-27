@@ -499,9 +499,6 @@ def infer_arr(img_path):
     cv2.rectangle(img_bb, (bb[0], bb[1]), (bb[2], bb[3]), (255, 255, 0))
 
     foreground, mask, contour4mask = auto_grabcut(img, bb)
-#     cv2.imwrite('./data/img_with_bb.png', img_bb)
-#     cv2.imwrite('./data/foreground.png', foreground)
-#     cv2.imwrite('./data/mask.png', mask)
     df_n, df_s = extract_corners(img, mask) # df_natural, df_synthe
 
     dic = create_dic_patch_prediction()
@@ -510,11 +507,15 @@ def infer_arr(img_path):
 
     img_lr = img + 0
     img_lr = draw_circle_(img_lr, df_n, dic)
-    cv2.imwrite('./data/img_lr.png', img_lr)
     cost = {'replace':1, 'delete':1, 'insert':1}
     path_flw_dic = './saved_data/dic_iea.pkl'
     arr_iea = LR2IEA(arr_lr)
     types, min_ = arr2TYPE(path_flw_dic, arr_iea, cost)
 
     ARR = arr_iea.upper()
+
+    cv2.imwrite('./data/img_bb.png', img_bb)
+    cv2.imwrite('./data/img_fore.png', foreground)
+    cv2.imwrite('./data/img_lr.png', img_lr)
+
     return bb, contour4mask, df_n, ARR
