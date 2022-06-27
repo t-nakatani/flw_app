@@ -10,3 +10,4 @@ class ImageModel(models.Model):
     lr = models.ImageField(default='Not Set')
     bb = models.ImageField(default='Not Set')
     fore = models.ImageField(default='Not Set')
+    re_estimate = models.ImageField(default='Not Set')

@@ -323,21 +323,23 @@ def petal_array(dic_, df_):
 
     return preds
 
-def draw_circle_(img, df, dic):
+def draw_circle_(img, df):
     R = cv2.imread('./saved_data/R.png')
     L = cv2.imread('./saved_data/L.png')
     pnames = list(df['patch_name'])
     cx_list = list(df['cx'])
     cy_list = list(df['cy'])
-    lr_list = [dic[pname] for pname in pnames]
+    lr_list = list(df['label'])
     for cx, cy, lr in zip(cx_list, cy_list, lr_list):
         cv2.circle(img, (cx, cy), 15, (255, 255, 255), thickness=-1)
-        if lr == '0':
+        if int(lr) == 0:
             cv2.circle(img, (cx, cy), 15, (0, 0, 255), thickness=2)
             img[cy-10:cy+10, cx-10:cx+10] = R
-        else:
+        elif int(lr) == 1:
             cv2.circle(img, (cx, cy), 15, (255, 0, 0), thickness=2)
             img[cy-10:cy+10, cx-10:cx+10] = L
+        else:
+            print('type mismatching !!')
     return img
 
 def create_dic_patch_prediction():
@@ -502,20 +504,39 @@ def infer_arr(img_path):
     df_n, df_s = extract_corners(img, mask) # df_natural, df_synthe
 
     dic = create_dic_patch_prediction()
+    df_n['label'] = [dic[key] for key in df_n['patch_name']]
 
     arr_lr = petal_array(dic, df_n)
 
     img_lr = img + 0
-    img_lr = draw_circle_(img_lr, df_n, dic)
+    img_lr = draw_circle_(img_lr, df_n)
     cost = {'replace':1, 'delete':1, 'insert':1}
     path_flw_dic = './saved_data/dic_iea.pkl'
     arr_iea = LR2IEA(arr_lr)
     types, min_ = arr2TYPE(path_flw_dic, arr_iea, cost)
-
     ARR = arr_iea.upper()
 
     cv2.imwrite('./data/img_bb.png', img_bb)
     cv2.imwrite('./data/img_fore.png', foreground)
     cv2.imwrite('./data/img_lr.png', img_lr)
+    df_n.to_csv('./data/df_n.csv', index=False)
 
     return bb, contour4mask, df_n, ARR
+
+def min_dist_arg(coord, coord_list):
+    dist_list = [(coord[0]-coord2[0])**2 + (coord[1]-coord2[1])**2 for coord2 in coord_list]
+    return np.argmin(dist_list)
+
+def reinfer_arr(img_path, clicked_coord):
+    df_n = pd.read_csv('./data/df_n.csv')
+    coord_list = np.array(df_n.loc[:, 'cx':'cy'])
+    clicked_coord = np.array(clicked_coord).astype(np.float64)
+
+    for coord in clicked_coord:
+        coord *= 2.5
+        idx = min_dist_arg(coord, coord_list)
+        df_n.loc[idx, 'label'] = 1 - df_n.loc[idx, 'label']
+    img = cv2.imread(img_path)
+    img_reestimate = draw_circle_(img, df_n)
+    cv2.imwrite('./data/img_re_estimate.png', img)
+    return
