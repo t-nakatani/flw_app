@@ -31,7 +31,6 @@ def success(request):
 
 def display_img_lr(request):
     if request.method == 'GET':
-
         last_img = ImageModel.objects.order_by("id").last() 
 
         if not os.path.exists('data'):
@@ -43,13 +42,16 @@ def display_img_lr(request):
         return render(request, 'display_image_lr.html', context)
 
     if request.method == 'POST':
-        list_coord = (request.POST.get('coord_list', None)).split(',')
-        list_coord = list(map(int, list_coord))
-        list_coord = np.array(list_coord).reshape(-1, 2)
-        print('coord_list:', type(list_coord), list_coord)
-
-        context = {'test' : list_coord}
-        return render(request, 'display_image_lr.html', context)
+        clicked_coord = (request.POST.get('coord_list', None)).split(',')
+        clicked_coord = list(map(int, clicked_coord))
+        clicked_coord = np.array(clicked_coord).reshape(-1, 2)
+        
+        last_img = ImageModel.objects.order_by("id").last() 
+        reinfer_arr(str(settings.BASE_DIR) + last_img.img.url, clicked_coord)
+        shape = result(mode='re_estimate')
+        last_img.re_estimate = "img_re_estimate.png"
+        context = {'last_img' : last_img, 'height' : shape[0]//2.5, 'width' : shape[1]//2.5}
+        return render(request, 'display_image_re_estimate.html', context)
 
 def display_img_bb(request):
     last_img = ImageModel.objects.order_by("id").last() 
