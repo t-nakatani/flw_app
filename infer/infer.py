@@ -527,16 +527,16 @@ def min_dist_arg(coord, coord_list):
     dist_list = [(coord[0]-coord2[0])**2 + (coord[1]-coord2[1])**2 for coord2 in coord_list]
     return np.argmin(dist_list)
 
-def reinfer_arr(img_path, clicked_coord):
+def update_intersection_label(img_path, clicked_coord, SIZE_CHANGING_RATIO):
     df_n = pd.read_csv('./data/df_n.csv')
     coord_list = np.array(df_n.loc[:, 'cx':'cy'])
     clicked_coord = np.array(clicked_coord).astype(np.float64)
 
     for coord in clicked_coord:
-        coord *= 2.5
+        coord *= SIZE_CHANGING_RATIO
         idx = min_dist_arg(coord, coord_list)
-        df_n.loc[idx, 'label'] = 1 - df_n.loc[idx, 'label']
+        df_n.loc[idx, 'label'] = 1 - df_n.loc[idx, 'label'] # flip label
     img = cv2.imread(img_path)
-    img_reestimate = draw_circle_(img, df_n)
+    img = draw_circle_(img, df_n)
     cv2.imwrite('./data/img_re_estimate.png', img)
     return

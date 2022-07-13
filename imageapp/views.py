@@ -30,6 +30,7 @@ def success(request):
     return render(request,'success.html')
 
 def display_img_lr(request):
+    SIZE_RATIO = 2.5
     if request.method == 'GET':
         last_img = ImageModel.objects.order_by("id").last() 
 
@@ -38,7 +39,7 @@ def display_img_lr(request):
         shape = result(mode='lr')
         last_img.lr = "img_lr.png" # lr >> left, right
         last_img.save()
-        context = {'last_img' : last_img, 'height' : shape[0]//2.5, 'width' : shape[1]//2.5}
+        context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
         return render(request, 'display_image_lr.html', context)
 
     if request.method == 'POST':
@@ -47,24 +48,24 @@ def display_img_lr(request):
         clicked_coord = np.array(clicked_coord).reshape(-1, 2)
         
         last_img = ImageModel.objects.order_by("id").last() 
-        reinfer_arr(str(settings.BASE_DIR) + last_img.img.url, clicked_coord)
+        update_intersection_label(str(settings.BASE_DIR) + last_img.img.url, clicked_coord, SIZE_RATIO)
         shape = result(mode='re_estimate')
         last_img.re_estimate = "img_re_estimate.png"
-        context = {'last_img' : last_img, 'height' : shape[0]//2.5, 'width' : shape[1]//2.5}
+        context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
         return render(request, 'display_image_re_estimate.html', context)
 
 def display_img_bb(request):
     last_img = ImageModel.objects.order_by("id").last() 
     last_img.bb = "img_bb.png"
     shape = result(mode='bb')
-    context = {'last_img' : last_img, 'height' : shape[0]//2.5, 'width' : shape[1]//2.5}
+    context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
     return render(request, 'display_image_bb.html', context)
 
 def display_img_fore(request):
     last_img = ImageModel.objects.order_by("id").last() 
     last_img.fore = "img_fore.png"
     shape = result(mode='fore')
-    context = {'last_img' : last_img, 'height' : shape[0]//2.5, 'width' : shape[1]//2.5}
+    context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
     return render(request, 'display_image_fore.html', context)
 
 def home(request):
