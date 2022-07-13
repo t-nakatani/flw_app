@@ -255,7 +255,7 @@ def synthesis(img1, img2):
     
     return synthetic_img_1on2, synthetic_img_2on1
 
-def extract_corners(img, mask):
+def extract_corners_and_create_patches(img, mask):
     fname = 'img.png'
     corners_list = []
     mask_ = mask + 0
@@ -342,7 +342,7 @@ def draw_circle_(img, df):
             print('type mismatching !!')
     return img
 
-def create_dic_patch_prediction():
+def predict_and_create_patch_dic():
         argparser = argparse.ArgumentParser()
         argparser.add_argument('--n_way', type=int, help='n way', default=2)
         argparser.add_argument('--k_spt', type=int, help='k shot for support set', default=5)
@@ -472,7 +472,7 @@ def make_mask_for_seg(foreground, ptlist):
         cv2.circle(gray_mask3c, (x, y), 5, (0, 0, 0), thickness=-1)
         cv2.circle(fore_, (x, y), 5, (0, 255, 0), thickness=-1)
     gray_mask1c = gray_mask3c[:,:,0].astype('uint8')
-    cv2.imwrite('fore_.png',  fore_)
+    cv2.imwrite('fore_.png', fore_)
     return gray_mask1c
 
 def mask2fore(old_fore, mask_gray):
@@ -492,18 +492,19 @@ def re_grabcut(old_mask, old_fore):
     return new_fore
 
 def infer_arr(img_path):
+    # print('===== infer_arr() is called ======')
     mk_data_dir()
     
     img = cv2.imread(img_path)
     bb_ = run(weights=weight_path, source=img_path, nosave=True, imgsz=(256, 256)).tolist()[0]
     bb = [int(xy) for xy in bb_]
     img_bb = img + 0
-    cv2.rectangle(img_bb, (bb[0], bb[1]), (bb[2], bb[3]), (255, 255, 0))
+    cv2.rectangle(img_bb, (bb[0], bb[1]), (bb[2], bb[3]), (255, 255, 0), thickness=4)
 
     foreground, mask, contour4mask = auto_grabcut(img, bb)
-    df_n, df_s = extract_corners(img, mask) # df_natural, df_synthe
+    df_n, df_s = extract_corners_and_create_patches(img, mask) # df_natural, df_synthe
 
-    dic = create_dic_patch_prediction()
+    dic = predict_and_create_patch_dic()
     df_n['label'] = [dic[key] for key in df_n['patch_name']]
 
     arr_lr = petal_array(dic, df_n)
@@ -537,6 +538,6 @@ def update_intersection_label(img_path, clicked_coord, SIZE_CHANGING_RATIO):
         idx = min_dist_arg(coord, coord_list)
         df_n.loc[idx, 'label'] = 1 - df_n.loc[idx, 'label'] # flip label
     img = cv2.imread(img_path)
-    img = draw_circle_(img, df_n)
+    img_ = draw_circle_(img, df_n)
     cv2.imwrite('./data/img_re_estimate.png', img)
     return

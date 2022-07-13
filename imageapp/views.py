@@ -12,10 +12,10 @@ import pandas as pd
 
 from infer.infer import *
 
+SIZE_RATIO = 2.5
+
 # Create your views here.
 class image_upload(CreateView):
-    if os.path.exists('data'):
-        shutil.rmtree('data')
     #テンプレートファイルの連携
     template_name = 'image_upload.html'
     #テーブルの連携
@@ -24,17 +24,15 @@ class image_upload(CreateView):
     fields = ('name', 'author', 'img')
     #リダイレクト先を指定
     success_url = reverse_lazy('display_lr')
-    pass
+    # pass
 
 def success(request):
     return render(request,'success.html')
 
 def display_img_lr(request):
-    SIZE_RATIO = 2.5
     if request.method == 'GET':
         last_img = ImageModel.objects.order_by("id").last() 
-
-        if not os.path.exists('data'):
+        if not os.path.exists('./data'):
             bb, contour4mask, df_n, ARR = infer_arr(str(settings.BASE_DIR) + last_img.img.url)
         shape = result(mode='lr')
         last_img.lr = "img_lr.png" # lr >> left, right
@@ -69,6 +67,8 @@ def display_img_fore(request):
     return render(request, 'display_image_fore.html', context)
 
 def home(request):
+    if os.path.exists('./data'):
+        shutil.rmtree('./data')
     return render(request, 'home.html')
 
 def result(mode):
