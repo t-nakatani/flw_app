@@ -14,3 +14,4 @@ data
 db.sqlite3
 imageapp/__pycache__
 imageapp/migrations/__pycache__/
+config/__pycache__/
