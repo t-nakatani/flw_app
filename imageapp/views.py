@@ -12,10 +12,10 @@ import pandas as pd
 
 from infer.infer import *
 
+SIZE_RATIO = 2.5
+
 # Create your views here.
 class image_upload(CreateView):
-    if os.path.exists('data'):
-        shutil.rmtree('data')
     #テンプレートファイルの連携
     template_name = 'image_upload.html'
     #テーブルの連携
@@ -24,7 +24,7 @@ class image_upload(CreateView):
     fields = ('name', 'author', 'img')
     #リダイレクト先を指定
     success_url = reverse_lazy('display_lr')
-    pass
+    # pass
 
 def success(request):
     return render(request,'success.html')
@@ -32,42 +32,65 @@ def success(request):
 def display_img_lr(request):
     if request.method == 'GET':
         last_img = ImageModel.objects.order_by("id").last() 
-
-        if not os.path.exists('data'):
+        if not os.path.exists('./data'):
             bb, contour4mask, df_n, ARR = infer_arr(str(settings.BASE_DIR) + last_img.img.url)
         shape = result(mode='lr')
         last_img.lr = "img_lr.png" # lr >> left, right
         last_img.save()
-        context = {'last_img' : last_img, 'height' : shape[0]//2.5, 'width' : shape[1]//2.5}
+        context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
         return render(request, 'display_image_lr.html', context)
 
     if request.method == 'POST':
         clicked_coord = (request.POST.get('coord_list', None)).split(',')
-        clicked_coord = list(map(int, clicked_coord))
+        clicked_coord = list(map(lambda x: int(int(x)*SIZE_RATIO), clicked_coord))
         clicked_coord = np.array(clicked_coord).reshape(-1, 2)
         
         last_img = ImageModel.objects.order_by("id").last() 
-        reinfer_arr(str(settings.BASE_DIR) + last_img.img.url, clicked_coord)
+        update_intersection_label(str(settings.BASE_DIR) + last_img.img.url, clicked_coord)
         shape = result(mode='re_estimate')
         last_img.re_estimate = "img_re_estimate.png"
-        context = {'last_img' : last_img, 'height' : shape[0]//2.5, 'width' : shape[1]//2.5}
+        context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
         return render(request, 'display_image_re_estimate.html', context)
 
 def display_img_bb(request):
     last_img = ImageModel.objects.order_by("id").last() 
     last_img.bb = "img_bb.png"
     shape = result(mode='bb')
-    context = {'last_img' : last_img, 'height' : shape[0]//2.5, 'width' : shape[1]//2.5}
+    context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
     return render(request, 'display_image_bb.html', context)
 
 def display_img_fore(request):
     last_img = ImageModel.objects.order_by("id").last() 
     last_img.fore = "img_fore.png"
     shape = result(mode='fore')
-    context = {'last_img' : last_img, 'height' : shape[0]//2.5, 'width' : shape[1]//2.5}
+    context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
     return render(request, 'display_image_fore.html', context)
 
+def display_img_corner(request):
+    if request.method == 'GET':
+        last_img = ImageModel.objects.order_by("id").last() 
+        # last_img.xxx = "img_xxx.png"
+        shape = result(mode='lr')
+        last_img.lr = "img_lr.png"
+        last_img.save()
+        context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
+        return render(request, 'display_image_corner.html', context)
+    if request.method == 'POST':
+        clicked_coord = (request.POST.get('coord_list', None)).split(',')
+        clicked_coord = list(map(lambda x: int(int(x)*SIZE_RATIO), clicked_coord))
+        clicked_coord = np.array(clicked_coord).reshape(-1, 2)
+        
+        last_img = ImageModel.objects.order_by("id").last() 
+        img_path = str(settings.BASE_DIR) + last_img.img.url
+        re_infer_with_clicked('./data/img.png', clicked_coord)
+        shape = result(mode='lr')
+        last_img.re_estimate = "img_lr.png"
+        context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
+        return render(request, 'display_image_lr.html', context)
+
 def home(request):
+    if os.path.exists('./data'):
+        shutil.rmtree('./data')
     return render(request, 'home.html')
 
 def result(mode):

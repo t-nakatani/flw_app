@@ -79,13 +79,12 @@ def find_IS_coordinate(center, radius, boundary_copy_img):
     '''
     shape = boundary_copy_img.shape
     blank = np.zeros(shape, np.uint8)
-    blank = cv2.circle(blank, center, radius, [255,255,0],1)
+    blank = cv2.circle(blank, center, radius, [255,255,0],3)
 #     boundary_copy_img = cv2.circle(boundary_copy_img, center, radius, [255,255,0],1)
 
 
     # find IS
     intersection_img = cv2.bitwise_and(boundary_copy_img, blank)
-    # print(intersection_img.shape)
     # gray_is = cv2.cvtColor(intersection_img, cv2.COLOR_BGR2GRAY)
     gray_is = intersection_img
     _, gray_is = cv2.threshold(gray_is, 1, 255, cv2.THRESH_BINARY)
@@ -93,7 +92,7 @@ def find_IS_coordinate(center, radius, boundary_copy_img):
     contours, hierarchy = cv2.findContours(gray_is, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
     
     coord_list = []
-    # intersections per acircle == 2
+    # intersections per one circle == 2
     if (len(contours)) < 2:
         return 0
     for k in range(2):
@@ -138,8 +137,8 @@ def affine2(theta, img_, center):
     #スケールを指定
     scale = 1.0
     #getRotationMatrix2D関数を使用
+    center = list(map(int, center))
     trans = cv2.getRotationMatrix2D(center, angle , scale)
-    # print()
     #アフィン変換
     img_ = cv2.warpAffine(img_, trans, (img_.shape[1], img_.shape[0]))
     return img_
@@ -147,10 +146,8 @@ def affine2(theta, img_, center):
 def extract_patches(img_copy, patch_name, C, theta):
     l = 15
     path_natu = './data/patch/natural/'
-    # print(C)
     cx, cy, cx1, cy1, cx2, cy2 = C
     img_ = affine2(theta, img_copy, (cx, cy))
-    # print(theta)
 
     patch = cv2.resize(img_[cy-l:cy+l+30, cx-l-5:cx+l+5], None, fx = 0.5, fy = 0.3333333)
     cv2.imwrite(path_natu + patch_name, patch)
@@ -255,7 +252,7 @@ def synthesis(img1, img2):
     
     return synthetic_img_1on2, synthetic_img_2on1
 
-def extract_corners(img, mask):
+def extract_corners_and_create_patches(img, mask):
     fname = 'img.png'
     corners_list = []
     mask_ = mask + 0
@@ -342,7 +339,7 @@ def draw_circle_(img, df):
             print('type mismatching !!')
     return img
 
-def create_dic_patch_prediction():
+def predict_and_create_patch_dic():
         argparser = argparse.ArgumentParser()
         argparser.add_argument('--n_way', type=int, help='n way', default=2)
         argparser.add_argument('--k_spt', type=int, help='k shot for support set', default=5)
@@ -472,7 +469,7 @@ def make_mask_for_seg(foreground, ptlist):
         cv2.circle(gray_mask3c, (x, y), 5, (0, 0, 0), thickness=-1)
         cv2.circle(fore_, (x, y), 5, (0, 255, 0), thickness=-1)
     gray_mask1c = gray_mask3c[:,:,0].astype('uint8')
-    cv2.imwrite('fore_.png',  fore_)
+    cv2.imwrite('fore_.png', fore_)
     return gray_mask1c
 
 def mask2fore(old_fore, mask_gray):
@@ -495,15 +492,16 @@ def infer_arr(img_path):
     mk_data_dir()
     
     img = cv2.imread(img_path)
+    cv2.imwrite('./data/img.png', img)
     bb_ = run(weights=weight_path, source=img_path, nosave=True, imgsz=(256, 256)).tolist()[0]
     bb = [int(xy) for xy in bb_]
     img_bb = img + 0
-    cv2.rectangle(img_bb, (bb[0], bb[1]), (bb[2], bb[3]), (255, 255, 0))
+    cv2.rectangle(img_bb, (bb[0], bb[1]), (bb[2], bb[3]), (255, 255, 0), thickness=4)
 
     foreground, mask, contour4mask = auto_grabcut(img, bb)
-    df_n, df_s = extract_corners(img, mask) # df_natural, df_synthe
+    df_n, df_s = extract_corners_and_create_patches(img, mask) # df_natural, df_synthe
 
-    dic = create_dic_patch_prediction()
+    dic = predict_and_create_patch_dic()
     df_n['label'] = [dic[key] for key in df_n['patch_name']]
 
     arr_lr = petal_array(dic, df_n)
@@ -527,16 +525,42 @@ def min_dist_arg(coord, coord_list):
     dist_list = [(coord[0]-coord2[0])**2 + (coord[1]-coord2[1])**2 for coord2 in coord_list]
     return np.argmin(dist_list)
 
-def reinfer_arr(img_path, clicked_coord):
+def update_intersection_label(img_path, clicked_coord):
     df_n = pd.read_csv('./data/df_n.csv')
     coord_list = np.array(df_n.loc[:, 'cx':'cy'])
     clicked_coord = np.array(clicked_coord).astype(np.float64)
 
     for coord in clicked_coord:
-        coord *= 2.5
+        # coord *= SIZE_CHANGING_RATIO
         idx = min_dist_arg(coord, coord_list)
-        df_n.loc[idx, 'label'] = 1 - df_n.loc[idx, 'label']
+        df_n.loc[idx, 'label'] = 1 - df_n.loc[idx, 'label'] # flip label
     img = cv2.imread(img_path)
-    img_reestimate = draw_circle_(img, df_n)
+    img_ = draw_circle_(img, df_n)
     cv2.imwrite('./data/img_re_estimate.png', img)
     return
+
+# 一回目の座標とのマッチングを行うか，修正の際に指定された座標を信じるか． 簡単な後者をとりあえず実装．
+def re_infer_with_clicked(img_path, clicked_coord_xy):
+    # create df_corner, then update df_n(df for natural_patch) by df_corner
+    if os.path.exists('./data/patch'):
+        shutil.rmtree('./data/patch')
+    mk_patch_dir()
+    img = cv2.imread(img_path)
+    img_fore = cv2.imread('./data/img_fore.png')
+    df_n, df_s = create_patches_from_ptlist(clicked_coord_xy, 'img.png', './data/patch/', img_fore)
+    dic = predict_and_create_patch_dic()
+    df_n['label'] = [dic[key] for key in df_n['patch_name']]
+
+    arr_lr = petal_array(dic, df_n)
+    img_lr = img + 0
+    img_lr = draw_circle_(img_lr, df_n)
+    cost = {'replace':1, 'delete':1, 'insert':1}
+    path_flw_dic = './saved_data/dic_iea.pkl'
+    arr_iea = LR2IEA(arr_lr)
+    types, min_ = arr2TYPE(path_flw_dic, arr_iea, cost)
+    ARR = arr_iea.upper()
+
+    cv2.imwrite('./data/img_lr.png', img_lr)
+    df_n.to_csv('./data/df_n.csv', index=False)
+
+    return 

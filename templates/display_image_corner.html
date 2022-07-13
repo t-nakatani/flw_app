@@ -2,21 +2,21 @@
 
 {% block header %}
 <div class="alert alert-primary" role="alert">
-   <h3> 推定結果</h3>
+   <h3> 重なり点の修正</h3>
 </div>
 {% endblock header %}
 
 {% block content %}
 <div class="container">
     <div class="alert alert-success d-flex justify-content-evenly" role="alert">
-        <p class=""><img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}' id="img1" onclick="mccl('img1')"></p>
-        <p class=""><img src='{{ last_img.lr.url }}' width='{{ width }}' height='{{ height }}' id="img2" onclick="mccl('img2')"></p>
+        <p class=""><img src='{{ last_img.lr.url }}' width='{{ width }}' height='{{ height }}' id="img1" onclick="mccl('img1')"></p>
+        <p class=""><img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}' id="img2" onclick="mccl('img2')"></p>
     </div>
     <div class="text-right">
-        <a class="btn btn-outline-secondary"href="{% url 'display_bb' %}" role="button">バウンディングボックス</a>
+        <a class="btn btn-outline-secondary" href="{% url 'display_bb' %}" role="button">バウンディングボックス</a>
         <a class="btn btn-outline-secondary" href="{% url 'display_fore' %}" role="button">前景画像</a>
- <!--        <a class="btn btn-primary" href="{% url 'display_lr' %}" role="button">推定結果</a> -->
-        <a class="btn btn-primary" href="{% url 'display_corner' %}" role="button">重なり点の修正</a>
+        <a class="btn btn-outline-secondary" href="{% url 'display_lr' %}" role="button">推定結果</a>
+<!--         <a class="btn btn-primary" href="{% url 'display_corner' %}" role="button">重なり点の修正</a> -->
     </div>
     <script>
     	var xy_coord_list = [];
@@ -46,11 +46,11 @@
 
 <div class="alert d-flex justify-content-end">
 <!--     <a href="{% url 'upload' %}" class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">アップロード</a> -->
-	<form method="post">
+	<form action="{% url 'display_lr' %}" method="post">
 		{% csrf_token %}
 		<input type="hidden" name="coord_list" id="coord_list">
-		<input type="submit" class="btn btn-secondary" value="ラベル修正"  class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">
-	<a href="{% url 'home' %}" class="btn btn-outline-secondary" tabindex="-1" role="button" aria-disabled="true">ホーム</a>
+		<input type="submit" class="btn btn-secondary" value="再推定" class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">
+	<a href="{% url 'home' %}" class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">ホーム</a>
 </div>
 </div>
 {% endblock content %}
