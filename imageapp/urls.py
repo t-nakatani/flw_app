@@ -11,4 +11,5 @@ urlpatterns = [
     path('display_image_bb',display_img_bb, name='display_bb'),
     path('display_image_fore',display_img_fore, name='display_fore'),
     path('home', home, name='home'),
+    # path("display_corner", display_corner.as_view(), name='display_img_corner'),
 ]
