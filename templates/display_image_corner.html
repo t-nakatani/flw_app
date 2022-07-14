@@ -15,8 +15,7 @@
     <div class="text-right">
         <a class="btn btn-outline-secondary" href="{% url 'display_bb' %}" role="button">バウンディングボックス</a>
         <a class="btn btn-outline-secondary" href="{% url 'display_fore' %}" role="button">前景画像</a>
-        <a class="btn btn-outline-secondary" href="{% url 'display_lr' %}" role="button">推定結果</a>
-<!--         <a class="btn btn-primary" href="{% url 'display_corner' %}" role="button">重なり点の修正</a> -->
+    	<a class="btn btn-outline-secondary" href="{% url 'display_lr' %}" role="button">推定結果</a>
     </div>
     <script>
     	var xy_coord_list = [];
@@ -37,20 +36,20 @@
 	        // alert(xy_coord_list);
 	    };
 	</script>
-<!-- 	<form method="post">
-		{% csrf_token %}
-		<input type="hidden" name="coord_list" id="coord_list">
-		<input type="submit" value="re-estimate">
-	</form> -->
-
 
 <div class="alert d-flex justify-content-end">
 <!--     <a href="{% url 'upload' %}" class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">アップロード</a> -->
-	<form action="{% url 'display_lr' %}" method="post">
-		{% csrf_token %}
+	<form method="post">{% csrf_token %}
+		{{ form }}
+		<!-- {{ form.as_p }} -->
 		<input type="hidden" name="coord_list" id="coord_list">
-		<input type="submit" class="btn btn-secondary" value="再推定" class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">
-	<a href="{% url 'home' %}" class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">ホーム</a>
+		<input type="submit" name="submit_btn" value="再推定" class="btn btn-primary" tabindex="-1" aria-disabled="true">
+	<a href="{% url 'home' %}" class="btn btn-outline-secondary" tabindex="-1" role="button" aria-disabled="true">ホーム</a>
 </div>
+<!--     <form method="POST">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">送信</button>
+    </form> -->
+
 </div>
 {% endblock content %}
