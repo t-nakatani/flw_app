@@ -12,7 +12,5 @@
 .DS_Store
 data
 db.sqlite3
-*/__pycache__/
-imageapp/__pycache__
-imageapp/migrations/__pycache__/
-config/__pycache__/
+*__pycache__*
+__pycache__/
