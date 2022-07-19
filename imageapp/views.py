@@ -108,9 +108,12 @@ def home(request):
         dt = get_date_str()
         dst = f'./log_result/{dt}/'
         os.mkdir(dst)
-        shutil.move('./data/img.png', dst)
-        shutil.move('./data/log_result.json', dst)
-        shutil.move('./data/df_n.csv', dst)
+        try:
+            shutil.move('./data/img.png', dst)
+            shutil.move('./data/log_result.json', dst)
+            shutil.move('./data/df_n.csv', dst)
+        except:
+            print('there isnt enough result data !!')
         shutil.rmtree('./data')
 
     return render(request, 'home.html')
