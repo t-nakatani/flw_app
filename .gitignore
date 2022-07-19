@@ -11,7 +11,7 @@
 
 .DS_Store
 data
-log_result
+log_result/*
 db.sqlite3
 *__pycache__*
 __pycache__/
