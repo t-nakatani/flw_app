@@ -4,8 +4,6 @@
 
 #YOLOv5系はいらない
 /infer/yolov5/exp21_best.pt
-/infer/yolov5/requirements.txt
-/infer/yolov5/tutorial.ipynb
 /ipynb
 
 .DS_Store
