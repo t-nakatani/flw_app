@@ -1,4 +1,4 @@
-import os, cv2, sys, re, math, Levenshtein, pickle, shutil, math, pprint
+import os, cv2, sys, re, math, Levenshtein, pickle, shutil, math, pprint, json
 import numpy as np
 import pandas as pd
 
@@ -48,11 +48,10 @@ def auto_grabcut(img, bb):
                 idx = i
     blk = np.zeros(img.shape, np.uint8)
     mask = cv2.drawContours(blk, [contours[idx]], -1, color=(1, 1, 1), thickness=-1)
-    # cv2.imwrite('../data/mask/' + fname, dst)
-    # output_fname = fname.replace('.png', '') + '_' + str(bb_idx) + '.png'
     foreground = img * mask
     mask_ = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) * 255
-    return foreground, mask_,  [contours[idx]]
+    foreground = img * mask
+    return foreground, mask_, [contours[idx]]
 
 
 
@@ -518,7 +517,11 @@ def infer_arr(img_path):
     cv2.imwrite('./data/img_fore.png', foreground)
     cv2.imwrite('./data/img_lr.png', img_lr)
     df_n.to_csv('./data/df_n.csv', index=False)
+    # print(type(bb), type(contour4mask), type(contour4mask[0]), type(contour4mask[0][0]))
+    log_result = {'fname': os.path.basename(img_path), 'bb': bb, 'contour': list(map(int, np.array(contour4mask).flatten())), 'arrangement': ARR}
 
+    with open("./data/log_result.json", "w") as f:
+        json.dump(log_result, f, indent=4)
     return bb, contour4mask, df_n, ARR
 
 def min_dist_arg(coord, coord_list):
@@ -537,6 +540,7 @@ def update_intersection_label(img_path, clicked_coord):
     img = cv2.imread(img_path)
     img_ = draw_circle_(img, df_n)
     cv2.imwrite('./data/img_re_estimate.png', img)
+    df_n.to_csv('./data/df_n.csv', index=False)
     return
 
 # 一回目の座標とのマッチングを行うか，修正の際に指定された座標を信じるか． 簡単な後者をとりあえず実装．
@@ -563,4 +567,4 @@ def re_infer_with_clicked(img_path, clicked_coord_xy):
     cv2.imwrite('./data/img_lr.png', img_lr)
     df_n.to_csv('./data/df_n.csv', index=False)
 
-    return 
+    return

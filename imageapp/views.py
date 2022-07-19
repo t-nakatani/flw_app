@@ -10,6 +10,7 @@ from django.conf import settings
 import os, cv2, sys, re, math, Levenshtein, pickle, shutil, math, shutil
 import numpy as np
 import pandas as pd
+import datetime
 
 from infer.infer import *
 
@@ -104,7 +105,14 @@ def display_img_corner(request):
 
 def home(request):
     if os.path.exists('./data'):
+        dt = get_date_str()
+        dst = f'./log_result/{dt}/'
+        os.mkdir(dst)
+        shutil.move('./data/img.png', dst)
+        shutil.move('./data/log_result.json', dst)
+        shutil.move('./data/df_n.csv', dst)
         shutil.rmtree('./data')
+
     return render(request, 'home.html')
 
 def result(mode):
@@ -116,90 +124,12 @@ def result(mode):
 
     return img.shape
 
-
-# class display_corner(TemplateView):
-#     template_name = 'display_image_corner.html'
-#     success_url = 'display_image_lr'
-#     def get_success_url(self):
-#         return reverse_lazy('report_detail', kwargs={'pk': self.object.id})
-
-#     def get(self, request, *args, **kwargs):
-#         last_img = ImageModel.objects.order_by("id").last() 
-#         # last_img.xxx = "img_xxx.png"
-#         shape = result(mode='lr')
-#         last_img.lr = "img_lr.png"
-#         last_img.save()
-#         context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
-#         # return self.render_to_response(self.get_context_data(context))
-#         return self.render_to_response(context)
-
-#     def post(self, request, *args, **kwargs):
-#         clicked_coord = (request.POST.get('coord_list', None)).split(',')
-#         clicked_coord = list(map(lambda x: int(int(x)*SIZE_RATIO), clicked_coord))
-#         clicked_coord = np.array(clicked_coord).reshape(-1, 2)
-        
-#         last_img = ImageModel.objects.order_by("id").last() 
-#         img_path = str(settings.BASE_DIR) + last_img.img.url
-#         re_infer_with_clicked('./data/img.png', clicked_coord)
-#         shape = result(mode='lr')
-#         last_img.re_estimate = "img_lr.png"
-#         context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
-#         return render(request, 'display_image_lr.html', context)
-
-# class display_corner(FormView):
-#     template_name = 'display_image_lr.html'
-#     form_class = CornerForm
-#     success_url = 'display_image_lr'
-
-
-#     # get()のオーバーライド
-#     def get(self, request, *args, **kwargs):
-#         self.template_name = 'display_image_corner.html'
-#         last_img = ImageModel.objects.order_by("id").last() 
-#         # last_img.xxx = "img_xxx.png"
-#         shape = result(mode='lr')
-#         last_img.lr = "img_lr.png"
-#         last_img.save()
-#         context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
-#         # return self.render_to_response(self.get_context_data(context))
-#         return self.render_to_response(context)
-
-
-#     # form_valid()のオーバーライド
-#     def form_valid(self, form):
-#         print('==========', form.cleaned_data.keys())
-#         # print('==========', form.instance)
-#         # print(form.instance)
-#         clicked_coord = form.cleaned_data['coord_list'].split(',')
-#         clicked_coord = list(map(lambda x: int(int(x)*SIZE_RATIO), clicked_coord))
-#         clicked_coord = np.array(clicked_coord).reshape(-1, 2)
-        
-#         last_img = ImageModel.objects.order_by("id").last() 
-#         img_path = str(settings.BASE_DIR) + last_img.img.url
-#         re_infer_with_clicked('./data/img.png', clicked_coord)
-#         shape = result(mode='lr')
-#         last_img.re_estimate = "img_lr.png"
-#         context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
-#         return render(request, 'display_image_lr.html', context)
+def get_date_str():
+        t_delta = datetime.timedelta(hours=9)  # 9時間
+        JST = datetime.timezone(t_delta, 'JST')  # UTCから9時間差の「JST」タイムゾーン
+        dt = datetime.datetime.now(JST)  # タイムゾーン付きでローカルな日付と時刻を取得
+        dt = str(dt).split('.')[0].replace(' ', '-').replace(':', '')
+        return dt
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
    
