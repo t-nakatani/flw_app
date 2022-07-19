@@ -6,7 +6,6 @@
 /infer/yolov5/exp21_best.pt
 /infer/yolov5/requirements.txt
 /infer/yolov5/tutorial.ipynb
-/infer/yolov5/data
 /ipynb
 
 .DS_Store
