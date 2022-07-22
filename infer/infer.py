@@ -319,7 +319,7 @@ def petal_array(dic_, df_):
 
     return preds
 
-def draw_circle_(img, df):
+def create_img_lr(img_lr, df):
     R = cv2.imread('./saved_data/R.png')
     L = cv2.imread('./saved_data/L.png')
     pnames = list(df['patch_name'])
@@ -327,16 +327,24 @@ def draw_circle_(img, df):
     cy_list = list(df['cy'])
     lr_list = list(df['label'])
     for cx, cy, lr in zip(cx_list, cy_list, lr_list):
-        cv2.circle(img, (cx, cy), 15, (255, 255, 255), thickness=-1)
+        cv2.circle(img_lr, (cx, cy), 15, (255, 255, 255), thickness=-1)
         if int(lr) == 0:
-            cv2.circle(img, (cx, cy), 15, (0, 0, 255), thickness=2)
-            img[cy-10:cy+10, cx-10:cx+10] = R
+            cv2.circle(img_lr, (cx, cy), 15, (0, 0, 255), thickness=2)
+            img_lr[cy-10:cy+10, cx-10:cx+10] = R
         elif int(lr) == 1:
-            cv2.circle(img, (cx, cy), 15, (255, 0, 0), thickness=2)
-            img[cy-10:cy+10, cx-10:cx+10] = L
+            cv2.circle(img_lr, (cx, cy), 15, (255, 0, 0), thickness=2)
+            img_lr[cy-10:cy+10, cx-10:cx+10] = L
         else:
             print('type mismatching !!')
-    return img
+    return img_lr
+
+def create_img_corner(img_corner, df):
+    cx_list = list(df['cx'])
+    cy_list = list(df['cy'])
+    for cx, cy in zip(cx_list, cy_list):
+        cv2.circle(img_corner, (cx, cy), 6, (255, 255, 0), thickness=-1)
+    return img_corner
+
 
 def predict_and_create_patch_dic():
         argparser = argparse.ArgumentParser()
@@ -505,8 +513,10 @@ def infer_arr(img_path):
 
     arr_lr = petal_array(dic, df_n)
 
-    img_lr = img + 0
-    img_lr = draw_circle_(img_lr, df_n)
+    img_corner = np.copy(img)
+    img_corner = create_img_corner(img_corner, df_n)
+    img_lr = np.copy(img)
+    img_lr = create_img_lr(img_lr, df_n)
     cost = {'replace':1, 'delete':1, 'insert':1}
     path_flw_dic = './saved_data/dic_iea.pkl'
     arr_iea = LR2IEA(arr_lr)
@@ -515,6 +525,7 @@ def infer_arr(img_path):
 
     cv2.imwrite('./data/img_bb.png', img_bb)
     cv2.imwrite('./data/img_fore.png', foreground)
+    cv2.imwrite('./data/img_corner.png', img_corner)
     cv2.imwrite('./data/img_lr.png', img_lr)
     df_n.to_csv('./data/df_n.csv', index=False)
     # print(type(bb), type(contour4mask), type(contour4mask[0]), type(contour4mask[0][0]))
@@ -538,8 +549,8 @@ def update_intersection_label(img_path, clicked_coord):
         idx = min_dist_arg(coord, coord_list)
         df_n.loc[idx, 'label'] = 1 - df_n.loc[idx, 'label'] # flip label
     img = cv2.imread(img_path)
-    img_ = draw_circle_(img, df_n)
-    cv2.imwrite('./data/img_re_estimate.png', img)
+    img_ = create_img_lr(img, df_n)
+    cv2.imwrite('./data/img_new_lr.png', img)
     df_n.to_csv('./data/df_n.csv', index=False)
     return
 
@@ -556,14 +567,17 @@ def re_infer_with_clicked(img_path, clicked_coord_xy):
     df_n['label'] = [dic[key] for key in df_n['patch_name']]
 
     arr_lr = petal_array(dic, df_n)
-    img_lr = img + 0
-    img_lr = draw_circle_(img_lr, df_n)
+    img_corner = np.copy(img)
+    img_lr = np.copy(img)
+    img_corner = create_img_corner(img_corner, df_n)
+    img_lr = create_img_lr(img_lr, df_n)
     cost = {'replace':1, 'delete':1, 'insert':1}
     path_flw_dic = './saved_data/dic_iea.pkl'
     arr_iea = LR2IEA(arr_lr)
     types, min_ = arr2TYPE(path_flw_dic, arr_iea, cost)
     ARR = arr_iea.upper()
 
+    cv2.imwrite('./data/img_new_corner.png', img_corner)
     cv2.imwrite('./data/img_lr.png', img_lr)
     df_n.to_csv('./data/df_n.csv', index=False)
 

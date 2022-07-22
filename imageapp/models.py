@@ -8,7 +8,9 @@ class ImageModel(models.Model):
     # author = models.CharField(max_length=100, null=True)
     
     #アップロードされた画像を処理したもの
-    lr = models.ImageField(default='Not Set')
-    bb = models.ImageField(default='Not Set')
-    fore = models.ImageField(default='Not Set')
-    re_estimate = models.ImageField(default='Not Set')
+    lr = models.ImageField(default='img_lr.png')
+    corner = models.ImageField(default='img_corner.png')
+    bb = models.ImageField(default='img_bb.png')
+    fore = models.ImageField(default='img_fore.png')
+    new_corner = models.ImageField(default='img_new_corner.png')
+    new_lr = models.ImageField(default='img_new_lr.png')
