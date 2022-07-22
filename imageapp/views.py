@@ -53,21 +53,21 @@ def display_img_lr(request):
         
         last_img = ImageModel.objects.order_by("id").last() 
         update_intersection_label(str(settings.BASE_DIR) + last_img.img.url, clicked_coord)
-        shape = result(mode='re_estimate')
-        last_img.re_estimate = "img_re_estimate.png"
+        shape = result(mode='new_lr')
+        # last_img.re_estimate = "img_re_estimate.png"
         context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
         return render(request, 'display_image_re_estimate.html', context)
 
 def display_img_bb(request):
     last_img = ImageModel.objects.order_by("id").last() 
-    last_img.bb = "img_bb.png"
+    # last_img.bb = "img_bb.png"
     shape = result(mode='bb')
     context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
     return render(request, 'display_image_bb.html', context)
 
 def display_img_fore(request):
     last_img = ImageModel.objects.order_by("id").last() 
-    last_img.fore = "img_fore.png"
+    # last_img.fore = "img_fore.png"
     shape = result(mode='fore')
     context = {'last_img' : last_img, 'height' : shape[0]//SIZE_RATIO, 'width' : shape[1]//SIZE_RATIO}
     return render(request, 'display_image_fore.html', context)
@@ -96,17 +96,17 @@ def display_img_corner(request):
         clicked_coord = np.array(clicked_coord).reshape(-1, 2)
         
         last_img = ImageModel.objects.order_by("id").last() 
-        img_path = str(settings.BASE_DIR) + last_img.img.url
+        # img_path = str(settings.BASE_DIR) + last_img.img.url
         re_infer_with_clicked('./data/img.png', clicked_coord)
-        shape = result(mode='lr')
-        last_img.re_estimate = "img_corner_2nd.png"
+        shape = result(mode='new_corner')
+        # last_img.re_estimate = "img_corner_2nd.png"
         context = {
             'first_estimation': False,
             'last_img' : last_img, 
             'height' : shape[0]//SIZE_RATIO, 
             'width' : shape[1]//SIZE_RATIO
             }
-        return HttpResponseRedirect(request.path, context)
+        return render(request, 'display_image_corner.html', context)
         # https://docs.djangoproject.com/ja/4.0/ref/urlresolvers/#django.urls.reverse
         # return HttpResponseRedirect(reverse('display_lr'))
         

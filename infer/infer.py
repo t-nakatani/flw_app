@@ -550,7 +550,7 @@ def update_intersection_label(img_path, clicked_coord):
         df_n.loc[idx, 'label'] = 1 - df_n.loc[idx, 'label'] # flip label
     img = cv2.imread(img_path)
     img_ = create_img_lr(img, df_n)
-    cv2.imwrite('./data/img_re_estimate.png', img)
+    cv2.imwrite('./data/img_new_lr.png', img)
     df_n.to_csv('./data/df_n.csv', index=False)
     return
 
@@ -569,7 +569,7 @@ def re_infer_with_clicked(img_path, clicked_coord_xy):
     arr_lr = petal_array(dic, df_n)
     img_corner = np.copy(img)
     img_lr = np.copy(img)
-    img_corner = create_img_lr(img_corner, df_n)
+    img_corner = create_img_corner(img_corner, df_n)
     img_lr = create_img_lr(img_lr, df_n)
     cost = {'replace':1, 'delete':1, 'insert':1}
     path_flw_dic = './saved_data/dic_iea.pkl'
@@ -577,7 +577,7 @@ def re_infer_with_clicked(img_path, clicked_coord_xy):
     types, min_ = arr2TYPE(path_flw_dic, arr_iea, cost)
     ARR = arr_iea.upper()
 
-    cv2.imwrite('./data/img_corner.png', img_corner)
+    cv2.imwrite('./data/img_new_corner.png', img_corner)
     cv2.imwrite('./data/img_lr.png', img_lr)
     df_n.to_csv('./data/df_n.csv', index=False)
 

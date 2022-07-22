@@ -9,8 +9,8 @@
 {% block content %}
 <div class="container">
     <div class="alert alert-success d-flex justify-content-evenly" role="alert">
-        <p class=""><img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}' id="img1"></p>
-        <p class=""><img src='{{ last_img.re_estimate.url }}' width='{{ width }}' height='{{ height }}' id="img2"></p>
+        <p class=""><img src='{{ last_img.lr.url }}' width='{{ width }}' height='{{ height }}' id="img1"></p>
+        <p class=""><img src='{{ last_img.new_lr.url }}' width='{{ width }}' height='{{ height }}' id="img2"></p>
     </div>
 <!--     <div class="text-right">
         <a class="btn btn-primary" href="{% url 'display_bb' %}" role="button">バウンディングボックス</a>
