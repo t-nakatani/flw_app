@@ -35,8 +35,6 @@ def success(request):
 def display_img_lr(request):
     if request.method == 'GET':
         last_img = ImageModel.objects.order_by("id").last() 
-        # if not os.path.exists('./data'):
-        #     bb, contour4mask, df_n, ARR = infer_arr(str(settings.BASE_DIR) + last_img.img.url)
         shape = result(mode='lr')
         last_img.lr = "img_lr.png" # lr >> left, right
         last_img.save()
@@ -77,8 +75,8 @@ def display_img_corner(request):
         last_img = ImageModel.objects.order_by("id").last()
         if not os.path.exists('./data'):
             bb, contour4mask, df_n, ARR = infer_arr(str(settings.BASE_DIR) + last_img.img.url)
-        shape = result(mode='corner')
-        # last_img.corner = "img_corner.png"
+        shape = result(mode='corner_')
+        last_img.corner = "img_corner_.png"
         last_img.save()
         context = {
         'first_estimation': True,
@@ -98,8 +96,8 @@ def display_img_corner(request):
         last_img = ImageModel.objects.order_by("id").last() 
         # img_path = str(settings.BASE_DIR) + last_img.img.url
         re_infer_with_clicked('./data/img.png', clicked_coord)
-        shape = result(mode='new_corner')
-        # last_img.re_estimate = "img_corner_2nd.png"
+        shape = result(mode='corner_')
+        shape = result(mode='corner_old')
         context = {
             'first_estimation': False,
             'last_img' : last_img, 
@@ -133,6 +131,7 @@ def result(mode):
     result_img = img
     output = str(settings.BASE_DIR) + f"/media/img_{mode}.png"
     cv2.imwrite(output, result_img)
+    print(f'write img_{mode} in media')
 
     return img.shape
 
