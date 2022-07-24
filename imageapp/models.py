@@ -13,4 +13,4 @@ class ImageModel(models.Model):
     bb = models.ImageField(default='img_bb.png')
     fore = models.ImageField(default='img_fore.png')
     corner_old = models.ImageField(default='img_corner_old.png')
-    new_lr = models.ImageField(default='img_new_lr.png')
+    lr_old = models.ImageField(default='img_lr_old.png')

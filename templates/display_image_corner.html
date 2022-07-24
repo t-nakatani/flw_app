@@ -18,8 +18,9 @@
 			<canvas id="canvas_img_corner" width='{{ width }}' height='{{ height }}'></canvas>
 			<canvas id="canvas_img" width='{{ width }}' height='{{ height }}'></canvas>
 		{% else %}
-		<p class=""><img src='{{ last_img.corner_old.url }}' width='{{ width }}' height='{{ height }}'></p>
-		<p class=""><img src='{{ last_img.corner.url }}' width='{{ width }}' height='{{ height }}'></p>
+		<img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}'>
+		<img src='{{ last_img.corner_old.url }}' width='{{ width }}' height='{{ height }}'>
+		<img src='{{ last_img.corner.url }}' width='{{ width }}' height='{{ height }}'>
 		{% endif %} 
     </div>
     <div class="text-right">
@@ -86,33 +87,6 @@
 		canvas.addEventListener('click', onClick, false);
 	}
 	listen_click();
-
-
-	    // function mccl(idname){
-	    //     var canvas = document.getElementById(idname);
-		// 	let context = canvas.getContext('2d');
-	    //     var w0 = {{ width }};//初期値
-	    //     var h0 = {{ height }};//初期値
-	    //     w1 = s.getAttribute("width");//現在
-	    //     h1 = s.getAttribute("height");
-	    //     var r = s.getBoundingClientRect();
-	    //     var x = Math.round(event.clientX-r.left);
-	    //     var y = Math.round(event.clientY-r.top);
-	    //     x = Math.round(x*(w0/w1));
-	    //     y = Math.round(y*(h0/h1));
-	    //     xy_coord_list.push(x, y);
-	    //     document.getElementById('coord_list').value = xy_coord_list;
-
-		// 	// 円の描画
-		// 	context.beginPath();
-		// 	context.arc(x, y, 3, 0, Math.PI * 2, true);
-		// 	context.fillStyle = "lightskyblue";
-		// 	context.fill();
-		// 	context.strokeStyle = 'lightskyblue';
-		// 	context.lineWidth = 5;
-		// 	context.stroke();
-		// 	context.globalCompositeOperation = 'source-over';
-	    // };
 	</script>
 
 <div class="alert d-flex justify-content-end">

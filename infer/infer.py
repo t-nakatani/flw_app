@@ -550,7 +550,8 @@ def update_intersection_label(img_path, clicked_coord):
         df_n.loc[idx, 'label'] = 1 - df_n.loc[idx, 'label'] # flip label
     img = cv2.imread(img_path)
     img_ = create_img_lr(img, df_n)
-    cv2.imwrite('./data/img_new_lr.png', img)
+    shutil.move('./data/img_lr.png', './data/img_lr_old.png')
+    cv2.imwrite('./data/img_lr.png', img)
     df_n.to_csv('./data/df_n.csv', index=False)
     return
 
