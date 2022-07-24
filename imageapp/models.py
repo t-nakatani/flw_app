@@ -9,8 +9,8 @@ class ImageModel(models.Model):
     
     #アップロードされた画像を処理したもの
     lr = models.ImageField(default='img_lr.png')
-    corner = models.ImageField(default='img_corner.png')
+    corner = models.ImageField(default='')
     bb = models.ImageField(default='img_bb.png')
     fore = models.ImageField(default='img_fore.png')
-    new_corner = models.ImageField(default='img_new_corner.png')
-    new_lr = models.ImageField(default='img_new_lr.png')
+    corner_old = models.ImageField(default='img_corner_old.png')
+    lr_old = models.ImageField(default='img_lr_old.png')

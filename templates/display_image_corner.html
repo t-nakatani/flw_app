@@ -14,12 +14,13 @@
 {% block content %}
 <div class="container">
     <div class="alert alert-success d-flex justify-content-evenly" role="alert">
-		{% if first_estimation == 1 %}
-        	<p class=""><img src='{{ last_img.corner.url }}' width='{{ width }}' height='{{ height }}' id="img1" onclick="mccl('img1')"></p>
-        	<p class=""><img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}' id="img2" onclick="mccl('img2')"></p>
+		{% if first_estimation %}
+			<canvas id="canvas_img_corner" width='{{ width }}' height='{{ height }}'></canvas>
+			<canvas id="canvas_img" width='{{ width }}' height='{{ height }}'></canvas>
 		{% else %}
-		<p class=""><img src='{{ last_img.corner.url }}' width='{{ width }}' height='{{ height }}' id="img1" onclick="mccl('img1')"></p>
-		<p class=""><img src='{{ last_img.new_corner.url }}' width='{{ width }}' height='{{ height }}' id="img2" onclick="mccl('img2')"></p>
+		<img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}'>
+		<img src='{{ last_img.corner_old.url }}' width='{{ width }}' height='{{ height }}'>
+		<img src='{{ last_img.corner.url }}' width='{{ width }}' height='{{ height }}'>
 		{% endif %} 
     </div>
     <div class="text-right">
@@ -28,23 +29,64 @@
     	<a class="btn btn-outline-secondary" href="{% url 'display_lr' %}" role="button">推定結果</a>
     </div>
     <script>
-    	var xy_coord_list = [];
-	    function mccl(idname){
-	        var s = document.getElementById(idname);
-	        var w0 = {{ width }};//初期値
-	        var h0 = {{ height }};//初期値
-	        w1 = s.getAttribute("width");//現在
-	        h1 = s.getAttribute("height");
-	        var r = s.getBoundingClientRect();
-	        var x = Math.round(event.clientX-r.left);
-	        var y = Math.round(event.clientY-r.top);
-	        x = Math.round(x*(w0/w1));
-	        y = Math.round(y*(h0/h1));
-	        xy_coord_list.push(x, y);
-	        document.getElementById('coord_list').value = xy_coord_list;
-	        //////ここ座標
-	        // alert(xy_coord_list);
-	    };
+	// canvasへimageを描画
+	let canvas1 = document.getElementById('canvas_img_corner');
+	let context1 = canvas1.getContext('2d');
+	let canvas2 = document.getElementById('canvas_img');
+	let context2 = canvas2.getContext('2d');
+
+	var img_corner = new Image();
+	img_corner.src = '{{ last_img.corner.url }}';
+	img_corner.onload = function(){
+	context1.drawImage(img_corner, 0, 0, {{ width }}, {{ height }});
+	}
+
+	var img = new Image();
+	img.src = '{{ last_img.img.url }}';
+	img.onload = function(){
+	context2.drawImage(img, 0, 0, {{ width }}, {{ height }});
+	}
+
+	// クリック座標取得&円の描画
+	var xy_coord_list = [];
+	function listen_click(){
+		let canvas = document.getElementById('canvas_img');
+		let context = canvas.getContext('2d');
+		var w = canvas.width;
+		var h = canvas.height;
+		var x = 0;
+		var y = 0;
+		function onClick(e){
+			/*
+			* rectでcanvasの絶対座標位置を取得し、
+			* クリック座標であるe.clientX,e.clientYからその分を引く
+			* ※クリック座標はdocumentからの位置を返すため
+			* ※rectはスクロール量によって値が変わるので、onClick()内でつど定義
+			*/
+			var rect = e.target.getBoundingClientRect();
+			x = e.clientX - rect.left;
+			y = e.clientY - rect.top;
+			x_int = Math.round(x);
+			y_int = Math.round(y);
+			xy_coord_list.push(x_int, y_int);
+			document.getElementById('coord_list').value = xy_coord_list;
+
+			draw();
+			}
+
+		function draw(){
+			context.beginPath();
+			context.arc(x-2, y-2, 4, 0, Math.PI * 2, true);
+			context.fillStyle = "lightskyblue";
+			context.fill();
+			context.strokeStyle = 'lightskyblue';
+			context.lineWidth = 4;
+			context.stroke();
+			context.globalCompositeOperation = 'source-over';
+		}
+		canvas.addEventListener('click', onClick, false);
+	}
+	listen_click();
 	</script>
 
 <div class="alert d-flex justify-content-end">
