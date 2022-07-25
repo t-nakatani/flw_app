@@ -1,6 +1,3 @@
-# YOLOv5 🚀 by Ultralytics, GPL-3.0 license
-
-# Start FROM Nvidia PyTorch image https://ngc.nvidia.com/catalog/containers/nvidia:pytorch
 FROM t12nakatani/petal-maml
 
 # Install linux packages
