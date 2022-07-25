@@ -8,6 +8,11 @@
 {% endfor %}
 <div class="alert alert-primary" role="alert">
    <h3> 推定結果 </h3>
+   {% if first_estimation %}
+   <p>右側の画像をクリックして重なり点のラベルを修正してください</p>
+   {% else %}
+   <p>左: 入力画像, 中: 修正前, 右: 修正後</p>
+   {% endif %}
 </div>
 {% endblock header %}
 
@@ -26,7 +31,7 @@
     <div class="text-right">
         <a class="btn btn-outline-secondary"href="{% url 'display_bb' %}" role="button">バウンディングボックス</a>
         <a class="btn btn-outline-secondary" href="{% url 'display_fore' %}" role="button">前景画像</a>
-        <a class="btn btn-primary" href="{% url 'display_corner' %}" role="button">重なり点の修正</a>
+        <a class="btn btn-outline-secondary" href="{% url 'display_corner' %}" role="button">重なり点の修正</a>
     </div>
     <script>
 	// canvasへimageを描画
@@ -99,9 +104,17 @@
 <!--     <a href="{% url 'upload' %}" class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">アップロード</a> -->
 	<form method="post">
 		{% csrf_token %}
+		{% if first_estimation %}
 		<input type="hidden" name="coord_list" id="coord_list">
-		<input type="submit" class="btn btn-secondary" value="ラベル修正"  class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">
-	<a href="{% url 'home' %}" class="btn btn-outline-secondary" tabindex="-1" role="button" aria-disabled="true">ホーム</a>
+		<input type="submit" class="btn btn-primary" value="修正して確認"  class="btn btn-outline-secondary  " tabindex="-1" role="button" aria-disabled="true">
+		<a href="{% url 'home' %}" class="btn btn-primary" tabindex="-1" role="button" aria-disabled="true">修正せず結果を提出</a>
+		{% else %}
+		<a class="btn btn-primary" href="{% url 'display_lr' %}" role="button">修正をやり直す</a>
+		<a href="{% url 'home' %}" class="btn btn-primary" tabindex="-1" role="button" aria-disabled="true">結果を提出</a>
+		{% endif %}
+	
 </div>
 </div>
 {% endblock content %}
+
+

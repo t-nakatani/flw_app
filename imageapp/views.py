@@ -122,6 +122,7 @@ def display_img_corner(request):
 
 def home(request):
     if os.path.exists('./data'):
+        messages.add_message(request, messages.SUCCESS, u"SUCCESS: 推定結果が保存されました")
         dt = get_date_str()
         dst = f'./log_result/{dt}/'
         os.mkdir(dst)
