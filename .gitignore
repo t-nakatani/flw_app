@@ -10,5 +10,5 @@
 data
 log_result/*
 db.sqlite3
-*__pycache__*
+*/__pycache__/*
 __pycache__/
