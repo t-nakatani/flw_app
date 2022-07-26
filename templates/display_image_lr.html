@@ -11,7 +11,7 @@
    {% if first_estimation %}
    <p>右側の画像をクリックして重なり点のラベルを修正してください</p>
    {% else %}
-   <p>左: 入力画像, 中: 修正前, 右: 修正後</p>
+   <!-- <p>左: 入力画像, 中: 修正前, 右: 修正後</p> -->
    {% endif %}
 </div>
 {% endblock header %}
@@ -20,18 +20,34 @@
 <div class="container">
     <div class="alert alert-success d-flex justify-content-evenly" role="alert">
 		{% if first_estimation %}
-			<canvas id="canvas_img" width='{{ width }}' height='{{ height }}'></canvas>
-			<canvas id="canvas_img_lr" width='{{ width }}' height='{{ height }}'></canvas>
+			<p>
+				<canvas id="canvas_img" width='{{ width }}' height='{{ height }}'></canvas>
+				<span class="text-center d-block">入力画像</span>
+			</p>
+			<p>
+				<canvas id="canvas_img_lr" width='{{ width }}' height='{{ height }}'></canvas>
+				<span class="text-center d-block">推定された重なりのラベル</span>
+			</p>
 		{% else %}
-		<img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}'>
-		<img src='{{ last_img.lr_old.url }}' width='{{ width }}' height='{{ height }}'>
-		<img src='{{ last_img.lr.url }}' width='{{ width }}' height='{{ height }}'>
+		<!-- https://teratail.com/questions/145532 -->
+		<p>
+			<img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}'>
+			<span class="text-center d-block">入力画像</span>
+		</p>
+		<p>
+			<img src='{{ last_img.lr_old.url }}' width='{{ width }}' height='{{ height }}'>
+			<span class="text-center d-block">修正前</span>
+		</p>
+		<p>
+			<img src='{{ last_img.lr.url }}' width='{{ width }}' height='{{ height }}'>
+			<span class="text-center d-block">修正後</span>
+		</p>
 		{% endif %} 
     </div>
     <div class="text-right">
-        <a class="btn btn-outline-secondary"href="{% url 'display_bb' %}" role="button">バウンディングボックス</a>
+        <a class="btn btn-outline-secondary"href="{% url 'display_bb' %}" role="button">花の位置</a>
         <a class="btn btn-outline-secondary" href="{% url 'display_fore' %}" role="button">前景画像</a>
-        <a class="btn btn-outline-secondary" href="{% url 'display_corner' %}" role="button">重なり点の修正</a>
+        <a class="btn btn-outline-secondary" href="{% url 'display_corner' %}" role="button">重なり点の確認</a>
     </div>
     <script>
 	// canvasへimageを描画

@@ -9,13 +9,18 @@
 {% block content %}
 <div class="container">
     <div class="alert alert-success d-flex justify-content-evenly" role="alert">
-        <p class=""><img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}' id="img1"></p>
-        <p class=""><img src='{{ last_img.bb.url }}' width='{{ width }}' height='{{ height }}' id="img2"></p>
+        <p>
+            <img src='{{ last_img.img.url }}' width='{{ width }}' height='{{ height }}' id="img1">
+            <span class="text-center d-block">入力画像</span>
+        </p>
+        <p>
+            <img src='{{ last_img.bb.url }}' width='{{ width }}' height='{{ height }}' id="img2">
+            <span class="text-center d-block">推定された花の位置</span>
+        </p>
     </div>
     <div class="text-right">
-        <!-- <a class="btn btn-primary" href="{% url 'display_bb' %}" role="button">バウンディングボックス</a> -->
         <a class="btn btn-outline-secondary" href="{% url 'display_fore' %}" role="button">前景画像</a>
-        <a class="btn btn-primary" href="{% url 'display_corner' %}" role="button">重なり点</a>
+        <a class="btn btn-primary" href="{% url 'display_corner' %}" role="button">重なり点の確認</a>
     </div>
 
 <div class="alert d-flex justify-content-end">
