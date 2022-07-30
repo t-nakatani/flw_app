@@ -125,18 +125,29 @@ def display_img_corner(request):
 
 def home(request):
     if os.path.exists('./data'):
-        messages.add_message(request, messages.SUCCESS, u"SUCCESS: 推定結果が保存されました")
         dt = get_date_str()
-        dst = f'./log_result/{dt}/'
-        os.mkdir(dst)
-        try:
-            shutil.move('./data/img.png', dst)
-            shutil.move('./data/log_result.json', dst)
-            shutil.move('./data/df_n.csv', dst)
-        except:
-            print('there isnt enough result data !!')
+        if 'bug-report' in request.GET:
+            dst = f'./bug_report/{dt}/'
+            os.mkdir(dst)
+            try:
+                shutil.move('./data/img.png', dst)
+                shutil.move('./data/log_result.json', dst)
+                shutil.move('./data/df_n.csv', dst)
+                messages.add_message(request, messages.WARNING, u"BUG REPORT: 不具合が報告されました")
+            except:
+                messages.add_message(request, messages.ERROR, u"BUG REPORT: 不具合がが正しく報告されませんでした，開発者に確認してください")
+        else:
+            dst = f'./log_result/{dt}/'
+            os.mkdir(dst)
+            try:
+                shutil.move('./data/img.png', dst)
+                shutil.move('./data/log_result.json', dst)
+                shutil.move('./data/df_n.csv', dst)
+                messages.add_message(request, messages.SUCCESS, u"SUCCESS: 推定結果が保存されました")
+            except:
+                print('there isnt enough result data !!')
+                messages.add_message(request, messages.ERROR, u"ERROR: 推定結果が正しく保存されませんでした，開発者に確認してください")
         shutil.rmtree('./data')
-
     return render(request, 'home.html')
 
 def result(mode):

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load str_tags %}
 
 {% block header %}
 {% for message in messages %}
@@ -152,7 +153,8 @@
 						</div>
 						<div class="modal-footer">
 							<a class="btn btn-outline-secondary" role="button" data-dismiss="modal">戻る</button>
-							<a class="btn btn-outline-danger" href="{% url 'home' %}" role="button">報告</a>
+							<a class="btn btn-outline-danger" href="{% url 'home' %}?bug-report" role="button">報告</a>
+							<!-- <a class="btn btn-outline-danger" href="{% url 'home' %}" role="button">報告</a> -->
 						</div>
 					</div>
 				</div>
