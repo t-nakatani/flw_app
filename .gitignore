@@ -9,6 +9,7 @@
 .DS_Store
 data
 log_result/*
+bug_report/*
 db.sqlite3
 */__pycache__/*
 __pycache__/
