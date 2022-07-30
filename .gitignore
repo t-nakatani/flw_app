@@ -12,3 +12,7 @@ log_result/*
 db.sqlite3
 */__pycache__/*
 __pycache__/
+
+
+# 開発用template
+# templates/test_new_feature.html

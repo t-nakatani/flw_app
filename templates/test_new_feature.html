@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% for message in messages %}
+<div {% if message.tags %}class="{{ message.tags }}"{% endif %}>
+    {{ message }}
+</div>
+{% endfor %}
+<div class="text-white text-center bg-dark p-3 p-sm-5 mb-4 rounded">
+    <h1 class="display-4">花弁配置の推定アプリ(TEST画面)</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+    <!-- モーダルを開くボタン・リンク -->
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-2">
+                <a class="btn btn-primary" data-toggle="modal" data-target="#testModal">提出</a>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- ボタン・リンククリック後に表示される画面の内容 -->
+    <div class="modal fade" id="testModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">この内容で提出しますか?</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">戻る</button>
+                    <button type="button" class="btn btn-primary">提出</button>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+{% endblock content %}
+<!-- () -->

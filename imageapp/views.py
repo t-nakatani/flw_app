@@ -31,6 +31,9 @@ class image_upload(CreateView):
 
 def success(request):
     return render(request,'success.html')
+    
+def test_new_feature(request):
+    return render(request,'test_new_feature.html')
 
 def display_img_lr(request):
     if request.method == 'GET':
