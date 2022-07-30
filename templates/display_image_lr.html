@@ -11,7 +11,6 @@
    {% if first_estimation %}
    <p>右側の画像をクリックして重なり点のラベルを修正してください</p>
    {% else %}
-   <!-- <p>左: 入力画像, 中: 修正前, 右: 修正後</p> -->
    {% endif %}
 </div>
 {% endblock header %}
@@ -109,12 +108,6 @@
 	}
 	listen_click();
 	</script>
-<!-- 	<form method="post">
-		{% csrf_token %}
-		<input type="hidden" name="coord_list" id="coord_list">
-		<input type="submit" value="re-estimate">
-	</form> -->
-
 
 <div class="alert d-flex justify-content-end">
 	<form method="post">
