@@ -131,10 +131,15 @@
 			</div>
 			<!-- モーダルボタンをクリックした後に表示される画面の内容(submit) -->
 			<div class="modal fade" id="submit_modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-				<div class="modal-dialog">
+				<div class="modal-dialog modal-xl">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h4 class="modal-title" id="myModalLabel">この内容で提出します</h4>
+						</div>
+						<div class="modal-body">
+							<div class="container-fluid">
+								<img src='{{ last_img.lr.url }}' width='{{ width }}*2' height='{{ height }}*2' class="img-fluid d-block mx-auto">
+							</div>
 						</div>
 						<div class="modal-footer">
 							<a class="btn btn-outline-secondary" role="button" data-dismiss="modal">戻る</button>
