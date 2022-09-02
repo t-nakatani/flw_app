@@ -54,7 +54,7 @@ def display_img_lr(request):
         if clicked_coord[0] == '': # clickなしにPOSTが起こった場合．#https://office54.net/python/django/display-message-framework
             messages.add_message(request, messages.ERROR, u"ERROR: 修正するラベルを選択してからラベル修正ボタンを押下してください")
             return HttpResponseRedirect(request.path)
-        clicked_coord = list(map(lambda x: int(int(x)*SIZE_RATIO), clicked_coord))
+        clicked_coord = list(map(lambda x: int(int(x)*SIZE_RATIO/2), clicked_coord))
         clicked_coord = np.array(clicked_coord).reshape(-1, 2)
         
         last_img = ImageModel.objects.order_by("id").last() 
@@ -103,7 +103,7 @@ def display_img_corner(request):
         if clicked_coord[0] == '': # clickなしにPOSTが起こった場合．#https://office54.net/python/django/display-message-framework
             messages.add_message(request, messages.ERROR, u"ERROR: 花弁の重なり位置を選択してから再推定ボタンを押下してください")
             return HttpResponseRedirect(request.path)
-        clicked_coord = list(map(lambda x: int(int(x)*SIZE_RATIO), clicked_coord))
+        clicked_coord = list(map(lambda x: int(int(x)*SIZE_RATIO/2), clicked_coord))
         clicked_coord = np.array(clicked_coord).reshape(-1, 2)
         
         last_img = ImageModel.objects.order_by("id").last() 
