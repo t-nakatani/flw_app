@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-s)@@^v4z@ffhhht(%z6@iw)lyie0pz^7@7oq%tgy+r(_x3_!8b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -135,11 +135,11 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#画像を表示するときにurlの一部となる(あまりわかってない)
+# 画像を表示するときにurlの一部となる(あまりわかってない)
 MEDIA_URL = 'media/'
 
-#画像がアップロードされた時の保存先
-#本番環境でも使える書き方(DEBUG = True/Falseで条件分岐)
+# 画像がアップロードされた時の保存先
+# 本番環境でも使える書き方(DEBUG = True/Falseで条件分岐)
 
 
 if DEBUG:
