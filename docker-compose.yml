@@ -15,7 +15,7 @@ services:
     depends_on:
       - gunicorn
     ports:
-      - "8080:8080"
+      - "9001:9001"
     volumes:
       - ./conf.d:/etc/nginx/conf.d
       - gunicorn:/var/run/gunicorn
