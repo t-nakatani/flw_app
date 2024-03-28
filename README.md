@@ -16,6 +16,6 @@ flwappの直下で
 
 `python manage.py runserver 0.0.0.0:8000`
 
-http://localhost:8000/home/ にアクセス
+http://localhost:8000/ にアクセス
 
 This repository inherited https://github.com/t-nakatani/flwapp_nakatani_old
